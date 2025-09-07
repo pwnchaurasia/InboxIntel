@@ -2,6 +2,7 @@ from sqlalchemy.orm import Session
 from db.models import User
 from typing import Optional
 import logging
+from utils.app_helper import create_password_hash
 
 logger = logging.getLogger(__name__)
 
@@ -72,3 +73,27 @@ class UserService:
             logger.error(f"Error updating user profile: {e}")
             db.rollback()
             return None
+
+    @staticmethod
+    def create_user(name: str, phone_number: str, password: str, db: Session = None):
+        try:
+            password_hash = create_password_hash(password=password)
+            # Create user instance
+            new_user = User(
+                name=name,
+                phone_number=phone_number,
+                password_hash=password_hash,
+                is_admin=True,
+                is_active=True,
+                is_phone_verified=True
+            )
+            # Add to database
+            db.add(new_user)
+            db.commit()
+            db.refresh(new_user)
+
+            return new_user
+        except Exception as e:
+            db.rollback()
+            raise e
+

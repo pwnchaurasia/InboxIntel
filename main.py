@@ -8,12 +8,13 @@ from sqladmin import Admin
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import logging
-from apis.routers import api_router
+# from apis.routers import api_router
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 from admin.admin_auth import AdminAuth
 from admin.all_admin import admin_views
-from admin.routes import router as admin_router
+
+from admin.views.admin_auth_views import admin_auth_view_ins
 from db.db_conn import engine
 
 # FastAPI app
@@ -35,12 +36,12 @@ app.add_middleware(
 )
 
 
-admin = Admin(
-    app,
-    engine,
-    authentication_backend=AdminAuth(secret_key=os.getenv('SECRET_KEY')),
-    title="InboxIntel Admin"
-)
+# admin = Admin(
+#     app,
+#     engine,
+#     authentication_backend=AdminAuth(secret_key=os.getenv('SECRET_KEY')),
+#     title="InboxIntel Admin"
+# )
 
 
 for view in admin_views:
@@ -50,8 +51,9 @@ for view in admin_views:
         print(f"Error in {e}")
 
 # Include routers
-app.include_router(api_router)
-app.include_router(admin_router)
+# app.include_router(api_router)
+# app.include_router(admin_router)
+app.include_router(admin_auth_view_ins.router)
 
 
 @app.get("/", response_class=HTMLResponse)
