@@ -14,7 +14,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=True)
     phone_number = Column(String, unique=True, index=True)
+    password_hash = Column(String, nullable=True)  # Add this
     is_phone_verified = Column(Boolean, default=False)
+    is_admin = Column(Boolean, default=False)  # Add this for admin access
     is_active = Column(Boolean, default=False)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime, default=lambda: datetime.now(timezone.utc),
